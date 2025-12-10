@@ -131,6 +131,28 @@ export const getVideo = async (req, res, next) => {
   }
 }
 
+/**
+ * Get Videos by User - Public Endpoint
+ * 
+ * GET /api/videos/user/:userId
+ * Returns all videos uploaded by a specific user/channel
+ */
+export const getUserVideos = async (req, res, next) => {
+  try {
+    const videos = await Video.find({ channel: req.params.userId })
+      .populate('channel', 'name avatar subscribers')
+      .sort({ createdAt: -1 })
+
+    res.status(200).json({
+      success: true,
+      count: videos.length,
+      videos,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 // @desc    Create video (user uploads)
 // @route   POST /api/videos
 // @access  Private
@@ -340,10 +362,14 @@ export const likeVideo = async (req, res, next) => {
     }
     await user.save()
 
+    // Fetch the complete updated video with populated channel data
+    const updatedVideo = await Video.findById(videoId)
+      .populate('channel', 'name avatar subscribers bio')
+
     console.log('Saved - likes:', video.likes, 'dislikes:', video.dislikes)
     console.log('=== END LIKE ===\n')
 
-    res.status(200).json({ success: true, video })
+    res.status(200).json({ success: true, video: updatedVideo })
   } catch (error) {
     console.error('Like error:', error.message)
     res.status(400).json({ success: false, message: error.message })
@@ -414,10 +440,14 @@ export const dislikeVideo = async (req, res, next) => {
       $set: { likedBy: video.likedBy, likes: video.likes, dislikedBy: video.dislikedBy, dislikes: video.dislikes }
     }, { runValidators: false })
 
+    // Fetch the complete updated video with populated channel data
+    const updatedVideo = await Video.findById(videoId)
+      .populate('channel', 'name avatar subscribers bio')
+
     console.log('Saved - likes:', video.likes, 'dislikes:', video.dislikes)
     console.log('=== END DISLIKE ===\n')
 
-    res.status(200).json({ success: true, video })
+    res.status(200).json({ success: true, video: updatedVideo })
   } catch (error) {
     console.error('Dislike error:', error.message)
     res.status(400).json({ success: false, message: error.message })

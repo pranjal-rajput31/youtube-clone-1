@@ -52,7 +52,7 @@ export default function VideoDetail() {
       const result = await dispatch(likeVideoAsync(id))
       console.log('Like result:', result)
       // Redux will automatically update the selectedVideo with the new data
-      // The useEffect below will recalculate isLiked based on the updated video
+      // The component will re-render with updated likes/dislikes
     } catch (err) {
       console.error('Error liking video:', err)
       alert('Failed to like video: ' + err.message)
@@ -69,7 +69,7 @@ export default function VideoDetail() {
       const result = await dispatch(dislikeVideoAsync(id))
       console.log('Dislike result:', result)
       // Redux will automatically update the selectedVideo with the new data
-      // The useEffect below will recalculate isDisliked based on the updated video
+      // The component will re-render with updated likes/dislikes
     } catch (err) {
       console.error('Error disliking video:', err)
       alert('Failed to dislike video: ' + err.message)
