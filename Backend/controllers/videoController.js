@@ -131,26 +131,6 @@ export const getVideo = async (req, res, next) => {
   }
 }
 
-/**
- * Get Videos by User - Public Endpoint
- * 
- * GET /api/videos/user/:userId
- * Returns all videos uploaded by a specific user
-  try {
-    const videos = await Video.find({ channel: req.params.userId })
-      .populate('channel', 'name avatar subscribers')
-      .sort({ createdAt: -1 })
-
-    res.status(200).json({
-      success: true,
-      count: videos.length,
-      videos,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
 // @desc    Create video (user uploads)
 // @route   POST /api/videos
 // @access  Private
